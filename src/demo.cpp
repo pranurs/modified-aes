@@ -16,7 +16,6 @@ void buildMatrixFromTextFile (std::ifstream &file, std::vector < std::vector<int
                         state[i][j] = x;
                 }
         } 
-
         file.close();
 }
 
@@ -31,7 +30,6 @@ void buildTextFileFromMatrix (std::ofstream &file, std::vector < std::vector<int
 
                 file << "\n";
         }
-
         file.close();
 }
 
@@ -75,7 +73,7 @@ int main()
         std::string ciphertext2 = obj.encryptMessage (imagestring2, key, 1);
         std::string ciphertext3 = obj.encryptMessage (imagestring3, key, 1);
 
-        // std::cout<<"Coded length : "<<ciphertext.length()<<"\n\n\n";
+        // std::cout<<"Coded length : "<<ciphertext1.length()<<"\n\n\n";
 
         hexStringToMatrix (ciphertext1, state1, 128);
         hexStringToMatrix (ciphertext2, state2, 128);
