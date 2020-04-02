@@ -31,13 +31,10 @@ int multiply (int a, int b)
                 tmp_a &= 0xFF;
 
                 if (flag)
-                {
                         mult[i] = tmp_a ^ m;
-                }
                 else
-                {
                         mult[i] = tmp_a;
-                }
+
                 tmp_a = mult[i];
         }
         
@@ -75,9 +72,7 @@ void toHex (int* x)
         if (*x >= 0 && *x <= 9)
                 *x = *x - 0 + '0';
         if (*x >= 10 && *x <= 15)
-        {
                 *x = *x - 10 + 'a';
-        }
         return;
 }
 
@@ -103,7 +98,6 @@ void hexStringToMatrix (std::string plaintext, std::vector < std::vector<int> > 
 std::string matrixToHexString (std::vector < std::vector<int> > &state)
 {
         std::string converted = "";
-
         int temp1, temp2;
 
         for (int col=0; col<state[0].size(); col++)
