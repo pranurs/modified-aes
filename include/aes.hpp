@@ -14,9 +14,8 @@
                         AES (int keyLength = 128);
 
                         std::string encryptMessage (std::string plaintext, std::string key, int modifiedAES);
-
+                        
                         std::string decryptCipher (std::string ciphertext, std::string key, int modifiedAES);
-
 
                 private:
 
@@ -46,9 +45,6 @@
                         void transform (std::vector < std::vector<int> >  &state, std::vector < std::vector<int> > &initialKey, int encrypt);
 
                         void modifiedTransform (std::vector < std::vector<int> >  &state, std::vector < std::vector<int> > &initialKey, int encrypt);
-                        
         };
 
 #endif
-
-

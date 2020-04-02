@@ -71,9 +71,9 @@ int main()
 
         // std::cout<<"ENCRYPTING...\n\n";
 
-        std::string ciphertext1 = obj.encryptMessage (imagestring1, key, 0);
-        std::string ciphertext2 = obj.encryptMessage (imagestring2, key, 0);
-        std::string ciphertext3 = obj.encryptMessage (imagestring3, key, 0);
+        std::string ciphertext1 = obj.encryptMessage (imagestring1, key, 1);
+        std::string ciphertext2 = obj.encryptMessage (imagestring2, key, 1);
+        std::string ciphertext3 = obj.encryptMessage (imagestring3, key, 1);
 
         // std::cout<<"Coded length : "<<ciphertext.length()<<"\n\n\n";
 
@@ -91,9 +91,9 @@ int main()
 
         // std::cout<<"DECRYPTING...\n\n";
 
-        std::string decoded1 = obj.decryptCipher (ciphertext1, key, 0);
-        std::string decoded2 = obj.decryptCipher (ciphertext2, key, 0);
-        std::string decoded3 = obj.decryptCipher (ciphertext3, key, 0);
+        std::string decoded1 = obj.decryptCipher (ciphertext1, key, 1);
+        std::string decoded2 = obj.decryptCipher (ciphertext2, key, 1);
+        std::string decoded3 = obj.decryptCipher (ciphertext3, key, 1);
 
         hexStringToMatrix (decoded1, state1, 128);
         hexStringToMatrix (decoded2, state2, 128);
