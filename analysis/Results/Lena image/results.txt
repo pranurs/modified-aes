@@ -1,0 +1,17 @@
+LENA IMAGE ANALYSIS
+Entropy: 6.0051
+rxy : 0.8557
+covariance : 2.3746e+03.
+
+AES:
+ENTROPY: 7.9815
+covariance: -1.8018
+rxy = -3.3053e-04
+
+MAES:
+ENTROPY: 7.9805
+COVARIANCE: 13.3959
+RXY: 0.0025
+
+
+
