@@ -10,7 +10,7 @@ if __name__ == "__main__":
         Driver function
         Constructs and saves images according to specified filepaths
         '''
-        
+
         ap  = argparse.ArgumentParser()
         ap.add_argument ("-ip", "--input-filepath", required = True, help = "path to directory with required text files to be converted to an image")
         ap.add_argument ("-op", "--output-filepath", required = True, help = "path to directory where resulting image is to be saved (including filename)")
@@ -32,9 +32,4 @@ if __name__ == "__main__":
                 for (index, channel) in enumerate(channels):
                         image[:,:,index] = channel
                 plt.imsave (args["output_filepath"], image)
-
-
-
-
-
-
+                
