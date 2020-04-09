@@ -31,20 +31,6 @@ AES :: AES (int keyLength)
 }
 
 
-void AES :: printStateInHex (std::vector < std::vector<int> > &state)
-{
-        for (int i=0; i<4; i++)
-        {
-                for (int j=0; j<Nb; j++)
-                {
-                        std::cout<<std::hex<<state[i][j]<<" ";
-                }
-                std::cout<<std::endl;
-        }
-        std::cout<<std::endl;
-}
-
-
 void AES :: shiftRow (std::vector < std::vector<int> > &state, int rowIndex, int shiftBy, int encrypt = 1)
 {
         if(!encrypt)
@@ -304,19 +290,69 @@ void AES :: modifiedTransform (std::vector < std::vector<int> > &state, std::vec
         addRoundKey (state, currKey, encrypt);
 }
 
+
+std::string AES :: shuffleMatrix (std::string initial, int imageHeight, int imageWidth, int shuffle = 1)
+{
+        std::vector< std::vector<int> > matrix (imageHeight, std::vector<int> (imageWidth));
+        std::vector< std::vector<int> > shuffledMatrix (imageHeight, std::vector<int> (imageWidth));
+        
+        /// Variables used for shuffling
+        int metaBlockRow, metaBlockCol, blockRow, blockCol, shuffledBlockRow, shuffledBlockCol;
+        /// Final shuffled place
+        int newRow, newCol;
+
+        hexStringToMatrixBlockwise (initial, matrix);
+
+        for (int row=0; row<matrix.size(); row++)
+        {
+                for (int col=0; col<matrix[0].size(); col++)
+                {
+                        /// Dividing the state matrix into blocks of 64 x 64, wherein each block consists of 16 x 16 (4 x 4 blocks)
+                        metaBlockRow = row/64;
+                        metaBlockCol = col/64;
+
+                        /// Dividing the 64 x 64 block into 16 blocks of 4 x 4 each
+                        blockRow = (row%64)/4;
+                        blockCol = (col%64)/4;
+
+                        /// Finding the new row and column of the particular 4 x 4 block using the lookup tables
+                        if (shuffle)
+                        {
+                                shuffledBlockRow = c_sBox[blockRow][blockCol] >> 4;
+                                shuffledBlockCol = c_sBox[blockRow][blockCol] & 0x0F;
+                        }
+                        else
+                        {
+                                shuffledBlockRow = c_inverseSBox[blockRow][blockCol] >> 4;
+                                shuffledBlockCol = c_inverseSBox[blockRow][blockCol] & 0x0F;
+                        }
+                        
+                        /// Overall new row and column for the value matrix[row][col]
+                        newRow = metaBlockRow*64 + shuffledBlockRow*4 + row%4;
+                        newCol = metaBlockCol*64 + shuffledBlockCol*4 + col%4;
+
+                        shuffledMatrix[newRow][newCol] = matrix[row][col];
+                }
+        }
+
+        std::string finalShuffled = matrixToHexStringBlockwise (shuffledMatrix);
+
+        return finalShuffled;
+}
+
 std::string AES :: encryptMessage (std::string plaintext, std::string key, int modifiedAES = 0)
 {
         std::vector < std::vector<int> > initialKey (4, std::vector<int> (Nk));
         encrypt = 1;
         
-        hexStringToMatrix (key, initialKey, 4);
+        hexStringToMatrixColumnwise (key, initialKey, 4);
         std::string encryptedString = "";
 
         for (int i=0; i < plaintext.length(); i+=32)
         {
                 std::vector < std::vector<int> > state (4, std::vector<int> (Nb));
 
-                hexStringToMatrix (plaintext.substr(i,32), state, 4);
+                hexStringToMatrixColumnwise (plaintext.substr(i,32), state, 4);
 
                 if (modifiedAES)
                         modifiedTransform (state, initialKey, encrypt);
@@ -324,7 +360,7 @@ std::string AES :: encryptMessage (std::string plaintext, std::string key, int m
                 else
                         transform (state, initialKey, encrypt);
 
-                encryptedString += matrixToHexString (state);
+                encryptedString += matrixToHexStringColumnwise (state);
         }
 
         return encryptedString;
@@ -336,14 +372,14 @@ std::string AES :: decryptCipher (std::string ciphertext, std::string key, int m
         std::vector < std::vector<int> > initialKey (4, std::vector<int> (Nk));
         encrypt = 0;
         
-        hexStringToMatrix (key, initialKey, 4);
+        hexStringToMatrixColumnwise (key, initialKey, 4);
         std::string decryptedString = "";
 
         for (int i=0; i < ciphertext.length(); i+=32)
         {
                 std::vector < std::vector<int> > state (4, std::vector<int> (Nb));
 
-                hexStringToMatrix (ciphertext.substr(i,32), state, 4);
+                hexStringToMatrixColumnwise (ciphertext.substr(i,32), state, 4);
 
                 if (modifiedAES)
                         modifiedTransform (state, initialKey, encrypt);
@@ -351,7 +387,97 @@ std::string AES :: decryptCipher (std::string ciphertext, std::string key, int m
                 else
                         transform (state, initialKey, encrypt);
 
-                decryptedString += matrixToHexString (state);
+                decryptedString += matrixToHexStringColumnwise (state);
+        }
+
+        return decryptedString;
+}
+
+
+std::string AES :: proposedEncryptMessage (std::string plaintext, std::string key, int imageHeight = 0, int imageWidth = 0, int modifiedAES = 0)
+{
+        std::vector < std::vector<int> > initialKey (4, std::vector<int> (Nk));
+        std::vector < std::vector<int> > inverseInitialKey (4, std::vector<int> (Nk));
+        encrypt = 1;
+        
+        std::string inverseKey = xorHexString (key);
+
+        hexStringToMatrixColumnwise (inverseKey, inverseInitialKey, 4);
+        hexStringToMatrixColumnwise (key, initialKey, 4);
+
+        std::string encryptedString = "";
+
+        int block = 1;
+
+        for (int i=0; i < plaintext.length(); i+=32)
+        {
+                std::vector < std::vector<int> > state (4, std::vector<int> (Nb));
+
+                hexStringToMatrixColumnwise (plaintext.substr(i,32), state, 4);
+
+                if (modifiedAES)
+                        if (block%2)
+                                modifiedTransform (state, initialKey, encrypt);
+                        else
+                                modifiedTransform (state, inverseInitialKey, encrypt);
+                
+                else
+                        if (block%2)
+                                transform (state, initialKey, encrypt);
+                        else
+                                transform (state, inverseInitialKey, encrypt);
+
+                encryptedString += matrixToHexStringColumnwise (state);
+                block++;
+        }
+
+        /// If not divisible directly, padding may be done to satisfy this requirement. Padding and then shuffling may not be required for small messages with little chance of repitition
+        if ((imageHeight && imageWidth) && (imageHeight%64==0 && imageWidth%64==0))
+                encryptedString = shuffleMatrix (encryptedString, imageHeight, imageWidth, 1);
+
+        return encryptedString;
+}
+
+
+std::string AES :: proposedDecryptCipher (std::string ciphertext, std::string key, int imageHeight = 0, int imageWidth = 0, int modifiedAES = 0)
+{
+        std::vector < std::vector<int> > initialKey (4, std::vector<int> (Nk));
+        std::vector < std::vector<int> > inverseInitialKey (4, std::vector<int> (Nk));
+        encrypt = 0;
+
+        /// If not divisible directly, padding may be done to satisfy this requirement. Padding and then shuffling may not be required for small messages with little chance of repitition.
+        /// Follow same procedure as for encryption, for proper results.
+        if ((imageHeight && imageWidth) && (imageHeight%64==0 && imageWidth%64==0))
+                ciphertext = shuffleMatrix (ciphertext, imageHeight, imageWidth, 0);
+        
+        std::string inverseKey = xorHexString (key);
+
+        hexStringToMatrixColumnwise (inverseKey, inverseInitialKey, 4);
+        hexStringToMatrixColumnwise (key, initialKey, 4);
+        std::string decryptedString = "";
+
+        int block = 1;
+
+        for (int i=0; i < ciphertext.length(); i+=32)
+        {
+                std::vector < std::vector<int> > state (4, std::vector<int> (Nb));
+
+                hexStringToMatrixColumnwise (ciphertext.substr(i,32), state, 4);
+
+                if (modifiedAES)
+                        if (block%2)
+                                modifiedTransform (state, initialKey, encrypt);
+                        else
+                                modifiedTransform (state, inverseInitialKey, encrypt);
+                
+                else
+                        if (block%2)
+                                transform (state, initialKey, encrypt);
+                        else
+                                transform (state, inverseInitialKey, encrypt);
+
+                decryptedString += matrixToHexStringColumnwise (state);
+                block++;
         }
 
         return decryptedString;
