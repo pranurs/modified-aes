@@ -1,5 +1,5 @@
 /** 
- * @file aes.cpp
+ * @file aes.hpp
  * @brief contains a class AES for performing encryption and decryption using AES, MAES, and SMAES (proposed)
  * @author pranurs
  */
