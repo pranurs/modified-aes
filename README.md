@@ -50,6 +50,7 @@ All statistical analysis was carried out in MATLAB, for rendering histograms, co
 |<img src="images/Lena/Original/s_lena128.jpg">|<img src = "images/Lena/SMAES/Encrypted/lenaenc1.png">|<img src = "images/Lena/SMAES/Decrypted/lenadec1.png">|
 |<img src="images/Mickey/Original/mickey">|<img src = "images/Mickey/SMAES/Encrypted/mickeyenc3.png">|<img src = "images/Mickey/SMAES/Decrypted/mickeydec3.png">|
 |<img src="images/Penguin/Original/penguin.png">|<img src = "images/Penguin/SMAES/Encrypted/penguinPropEnc.png">|<img src = "images/Penguin/SMAES/Decrypted/penguinPropDec.png">|
+<hr>
 
 # Comparative Analysis
 
@@ -68,6 +69,7 @@ This difference becomes evident when observing the encrypted penguin images obta
 |MAES|SMAES|
 |:---:|:---:|
 |<img src = "images/Penguin/MAES/Encrypted/penguinMAESenc1.png">|<img src = "images/Penguin/SMAES/Encrypted/penguinPropEnc.png">|
+<hr>
 
 # Run-time Analysis
 
