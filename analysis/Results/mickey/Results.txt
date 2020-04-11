@@ -1,0 +1,42 @@
+Mickey Analysis:
+Red channel:
+Entropy: 3.9340
+cov: 5.1975e+03
+rxy: 0.9170
+Green Channel
+Entropy: 4.1227
+cov:6.1028e+03
+rxy:0.9274
+Blue channel
+Entropy: 4.4145
+cov:7.8941e+03
+rxy:0.9441
+
+AES:
+Red channel:
+Entropy: 7.1619
+cov: 2.550e+03
+rxy: 0.4219
+Green Channel
+Entropy: 7.1742
+cov:2.5478e+03
+rxy:0.4203
+Blue channel
+Entropy: 7.1775
+cov:2.5174e+03
+rxy:0.4166
+
+MAES:
+Red channel:
+Entropy: 7.2016
+cov: 1.8918e+03
+rxy: 0.3526
+Green Channel
+Entropy: 7.2140
+cov: 1.9331e+03
+rxy: 0.3595
+Blue channel
+Entropy: 7.2057
+cov:1.8932e+03
+rxy:0.3546
+
